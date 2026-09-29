@@ -1,0 +1,568 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   MASTER SOLAR V3.1 — CINEMATIC DEMO mode.
+
+   Additive stylesheet. It does not touch journey.css (the SYSTEM VIEW), so V3
+   stays exactly as validated. Art direction stays the warm/solar one: the stage is
+   the same warm charcoal used inside the V3 journey, never a neon crypto panel.
+   Rule of the mode: ONE focal surface per beat — everything not focused is dimmed,
+   never removed (a live pitch must never lose its place).
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.cine-section { padding-top: 8px; }
+.cine-head { max-width: 860px; margin-bottom: 20px; }
+.cine-head h2 { margin-top: 12px; max-width: 24ch; }
+.cine-head .lede { margin-top: 12px; max-width: 76ch; }
+
+.cine {
+  position: relative;
+  margin-top: 16px;
+  padding: 22px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, var(--stage-bg-2), var(--stage-bg));
+  border: 1px solid var(--stage-border);
+  color: var(--stage-text);
+  box-shadow: 0 40px 90px -70px rgba(21, 18, 14, 0.9);
+  overflow: hidden;
+  isolation: isolate;
+  transition: border-color 420ms ease, box-shadow 420ms ease, background 520ms ease;
+}
+.cine:focus-visible { outline: 3px solid var(--solar); outline-offset: 3px; }
+.cine[data-tone="wait"] { border-color: rgba(239, 180, 76, 0.34); }
+.cine[data-tone="stop"] {
+  border-color: rgba(239, 107, 90, 0.55);
+  box-shadow: 0 0 0 1px rgba(239, 107, 90, 0.25), 0 40px 110px -60px rgba(239, 107, 90, 0.5);
+}
+.cine[data-tone="book"] { border-color: rgba(63, 203, 154, 0.42); }
+
+/* ── the beat line ─────────────────────────────────────────────────────────── */
+.cine-cue { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 20px; }
+.cine-cue__step,
+.cine-cue__clock,
+.cine-cue__stage {
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--stage-dim);
+  border: 1px solid var(--stage-border-soft);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-variant-numeric: tabular-nums;
+}
+.cine-cue__clock { color: var(--stage-solar); border-color: rgba(239, 180, 76, 0.35); }
+.cine-cue__stage { color: var(--stage-energy); border-color: rgba(63, 203, 154, 0.32); }
+
+.cine-cue__headline {
+  margin: 12px 0 0;
+  font-size: clamp(28px, 4.4vw, 52px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: #fff;
+  max-width: 22ch;
+}
+.cine-cue__sub {
+  margin: 8px 0 0;
+  font-size: clamp(14px, 1.3vw, 17px);
+  color: var(--stage-dim);
+  max-width: 62ch;
+  min-height: 1.4em;
+}
+
+/* ── the travel indicator ─────────────────────────────────────────────────── */
+.cine-travel {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(63, 203, 154, 0.3);
+  background: rgba(63, 203, 154, 0.08);
+  color: var(--stage-text);
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 33px;
+}
+.cine-travel.is-idle { visibility: hidden; }
+.cine-travel.is-in {
+  border-color: rgba(239, 180, 76, 0.45);
+  background: rgba(239, 180, 76, 0.1);
+}
+.cine-travel__dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--stage-energy);
+  box-shadow: 0 0 0 0 rgba(63, 203, 154, 0.6);
+  animation: cine-pulse 1.5s ease-out infinite;
+}
+.cine-travel.is-in .cine-travel__dot { background: var(--stage-solar); box-shadow: 0 0 0 0 rgba(239, 180, 76, 0.6); }
+.cine-travel.is-static .cine-travel__dot { animation: none; }
+@keyframes cine-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(63, 203, 154, 0.55); }
+  100% { box-shadow: 0 0 0 12px rgba(63, 203, 154, 0); }
+}
+
+/* ── the board: conversation → record ─────────────────────────────────────── */
+.cine-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) 84px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  margin-top: 18px;
+}
+.cine-surface {
+  border: 1px solid var(--stage-border-soft);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.022);
+  padding: 14px;
+  min-width: 0;
+  transition: opacity 420ms ease, filter 420ms ease, transform 460ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 320ms ease, box-shadow 420ms ease;
+}
+.cine-surface.is-dim { opacity: 0.42; filter: saturate(0.55) brightness(0.78); }
+.cine[data-focus="record"] .cine-surface[data-testid="cine-surface-conversation"].is-dim,
+.cine[data-focus="conversation"] .cine-surface[data-testid="cine-surface-record"].is-dim { opacity: 0.3; }
+.cine-surface.is-hot {
+  border-color: rgba(63, 203, 154, 0.34);
+  box-shadow: 0 0 0 1px rgba(63, 203, 154, 0.16), 0 30px 70px -60px rgba(63, 203, 154, 0.7);
+}
+.cine-surface__head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--stage-border-soft);
+}
+.cine-surface__k {
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--stage-dim);
+}
+.cine-surface__v { font-size: 11.5px; font-weight: 700; color: var(--stage-energy); font-variant-numeric: tabular-nums; }
+.cine[data-tone="stop"] .cine-surface__v { color: var(--stage-stop); }
+
+/* the connector between the two surfaces — the internal data path */
+.cine-link { position: relative; display: flex; align-items: center; justify-content: center; min-height: 60px; }
+.cine-link__track {
+  position: absolute; left: 8px; right: 8px; top: 50%; height: 2px; transform: translateY(-50%);
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.16) 0 6px, transparent 6px 12px);
+}
+.cine-link[data-active="true"] .cine-link__track {
+  background: repeating-linear-gradient(90deg, rgba(63, 203, 154, 0.5) 0 6px, transparent 6px 12px);
+}
+.cine-link__packet {
+  position: absolute; top: 50%; margin-top: -5px; left: 8px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--stage-energy);
+  box-shadow: 0 0 14px 2px rgba(63, 203, 154, 0.6);
+}
+.cine-link__label {
+  position: relative; z-index: 1; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+  font-weight: 700; color: var(--stage-dim); background: var(--stage-bg-2); padding: 3px 7px; border-radius: 999px;
+  border: 1px solid var(--stage-border-soft); text-align: center; max-width: 100%;
+}
+
+.cine-record { display: grid; gap: 12px; }
+.cine-fields { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.cine-field {
+  display: inline-flex; align-items: baseline; gap: 6px; max-width: 100%;
+  border: 1px solid var(--stage-border-soft); border-radius: 999px; padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.cine-field__k { font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--stage-muted); font-weight: 700; }
+.cine-field__v { font-size: 12px; color: var(--stage-text); font-weight: 600; }
+.cine-field.is-empty { color: var(--stage-muted); font-size: 12px; border-style: dashed; }
+
+/* ── the outbox + the armed sequence ──────────────────────────────────────── */
+.cine-outbox {
+  margin-top: 16px; border: 1px solid var(--stage-border-soft); border-radius: 16px;
+  background: rgba(255, 255, 255, 0.022); padding: 14px;
+  transition: opacity 420ms ease, filter 420ms ease, border-color 320ms ease;
+}
+.cine-outbox.is-dim { opacity: 0.45; filter: saturate(0.6) brightness(0.8); }
+.cine-outbox.is-hot {
+  border-color: rgba(239, 180, 76, 0.34);
+  box-shadow: 0 0 0 1px rgba(239, 180, 76, 0.14), 0 30px 70px -60px rgba(239, 180, 76, 0.6);
+}
+.cine-queue__list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+.cine-queue__empty { margin-top: 10px; font-size: 12.5px; color: var(--stage-muted); }
+.cine-fu {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  border: 1px solid var(--stage-border-soft); border-radius: 11px; padding: 8px 11px; overflow: hidden;
+  transition: border-color 300ms ease, background 300ms ease, opacity 300ms ease, transform 300ms ease;
+}
+.cine-fu__n {
+  flex: none; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 11px; font-weight: 700; background: rgba(255, 255, 255, 0.06); color: var(--stage-dim);
+}
+.cine-fu__body { min-width: 0; display: grid; }
+.cine-fu__label { font-size: 12.5px; color: var(--stage-text); font-weight: 600; }
+.cine-fu__meta { font-size: 11px; color: var(--stage-muted); }
+.cine-fu__tag {
+  margin-left: auto; flex: none; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  font-weight: 700; color: var(--stage-muted); border: 1px solid var(--stage-border-soft);
+  border-radius: 999px; padding: 2px 8px;
+}
+.cine-fu.is-sent { border-color: rgba(63, 203, 154, 0.28); }
+.cine-fu.is-sent .cine-fu__tag { color: var(--stage-energy); border-color: rgba(63, 203, 154, 0.35); }
+.cine-fu.is-armed,
+.cine-fu[data-active="true"] {
+  border-color: rgba(239, 180, 76, 0.5);
+  background: rgba(239, 180, 76, 0.07);
+  animation: cine-arm 1.9s ease-in-out infinite;
+}
+.cine-fu.is-armed .cine-fu__tag { color: var(--stage-solar); border-color: rgba(239, 180, 76, 0.45); }
+@keyframes cine-arm {
+  0%, 100% { box-shadow: inset 0 0 0 0 rgba(239, 180, 76, 0.0); }
+  50% { box-shadow: inset 0 0 0 1px rgba(239, 180, 76, 0.28); }
+}
+.cine-fu.is-cancelled { border-color: rgba(239, 107, 90, 0.3); background: rgba(239, 107, 90, 0.04); opacity: 0.7; }
+.cine-fu.is-cancelled .cine-fu__label { color: var(--stage-dim); }
+.cine-fu.is-cancelled .cine-fu__tag,
+.cine-fu__tag.is-stop { color: var(--stage-stop); border-color: rgba(239, 107, 90, 0.5); }
+.cine-fu__strike {
+  position: absolute; left: 12px; right: 78px; top: 50%; height: 2px; background: var(--stage-stop);
+  transform-origin: left center; border-radius: 2px; opacity: 0.85;
+}
+.cine-fu[data-status="answered"] { border-color: rgba(63, 203, 154, 0.4); }
+.cine-fu[data-status="answered"] .cine-fu__tag { color: var(--stage-energy); border-color: rgba(63, 203, 154, 0.4); }
+
+/* ── the STOP moment ──────────────────────────────────────────────────────── */
+.cine-stopwrap { margin-top: 16px; display: grid; gap: 10px; }
+.cine-stopbadge {
+  justify-self: start;
+  font-size: clamp(20px, 2.6vw, 30px); font-weight: 800; letter-spacing: 0.14em;
+  color: var(--stage-stop); text-transform: uppercase;
+  border: 2px solid rgba(239, 107, 90, 0.6); border-radius: 12px; padding: 6px 14px;
+  background: rgba(239, 107, 90, 0.1);
+  box-shadow: 0 0 40px -12px rgba(239, 107, 90, 0.55);
+}
+
+/* ── the reveal ───────────────────────────────────────────────────────────── */
+.cine-reveal {
+  margin-top: 18px; padding: 20px; border-radius: 16px;
+  border: 1px solid rgba(63, 203, 154, 0.3);
+  background: linear-gradient(180deg, rgba(63, 203, 154, 0.09), rgba(63, 203, 154, 0.02));
+}
+.cine-reveal__line { margin: 0; font-size: clamp(20px, 2.8vw, 32px); font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+.cine-reveal__sub { margin: 8px 0 0; font-size: 13.5px; color: var(--stage-dim); max-width: 70ch; }
+.cine-reveal__row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+.cine-btn {
+  border: 1px solid var(--stage-border); background: rgba(255, 255, 255, 0.05); color: var(--stage-text);
+  border-radius: 999px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: transform 200ms ease, border-color 200ms ease, background 200ms ease;
+}
+.cine-btn:hover { transform: translateY(-1px); border-color: var(--stage-energy); }
+.cine-btn--go { border-color: rgba(63, 203, 154, 0.5); background: rgba(63, 203, 154, 0.14); }
+.cine-btn:focus-visible { outline: 3px solid var(--solar); outline-offset: 2px; }
+
+.cine-note { font-size: 12px; margin-top: 14px; max-width: 92ch; }
+.cine-note__link {
+  border: 0; background: none; padding: 0; color: var(--energy); font-weight: 600; cursor: pointer;
+  font-size: 12px; text-decoration: underline;
+}
+
+/* ── mobile: one column, no horizontal overflow, same beat order ──────────── */
+@media (max-width: 900px) {
+  .cine { padding: 16px; border-radius: 18px; }
+  .cine-board { grid-template-columns: minmax(0, 1fr); }
+  .cine-link { min-height: 46px; }
+  .cine-link__track { left: 50%; right: auto; top: 6px; bottom: 6px; width: 2px; height: auto; transform: none; }
+  .cine-link__packet { left: 50%; margin-left: -5px; top: 6px; margin-top: 0; }
+  .cine-cue__headline { max-width: none; }
+  .cine-stopbadge { font-size: 18px; letter-spacing: 0.1em; }
+  .cine-fu__strike { right: 12px; }
+}
+
+/* ── reduced motion: same sequence, no travel/pulse decoration ────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cine-travel__dot { animation: none; }
+  .cine-fu.is-armed, .cine-fu[data-active="true"] { animation: none; border-color: rgba(239, 180, 76, 0.5); }
+  .cine-link__packet { display: none; }
+  .cine-surface, .cine-outbox { transition: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   V3.2 additions — focus mode, explanatory flow rail, big time beat, staggered
+   cancellation. Still additive: nothing here changes journey.css.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── FOCUS MODE — the demo becomes the surface, not a card on a page ──────── */
+.cine-section.is-focus {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  margin: 0;
+  padding: 0 0 34px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background:
+    radial-gradient(120% 80% at 18% 0%, rgba(217, 154, 43, 0.12), transparent 58%),
+    linear-gradient(180deg, var(--bg), var(--bg-soft));
+}
+.cine-section.is-focus .wrap { padding-top: 0; }
+.cine-focusbar {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0 10px;
+  margin-bottom: 6px;
+  background: linear-gradient(180deg, var(--bg) 62%, rgba(0, 0, 0, 0));
+}
+.cine-focusbar__t {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-dim);
+}
+.cine-section.is-focus .cine { margin-top: 8px; padding: clamp(16px, 2.2vw, 30px); border-radius: 20px; }
+
+/* ── the explanatory flow rail ───────────────────────────────────────────── */
+.cine-flow {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--stage-border-soft);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.022);
+  overflow: hidden;
+}
+.cine-flow__cell { display: flex; align-items: center; flex: 1 1 auto; min-width: 0; }
+.cine-flow__cell:last-child { flex: 0 0 auto; }
+.cine-flow__node {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-dim);
+  border: 1px solid var(--stage-border-soft);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: color 300ms ease, border-color 300ms ease, background 300ms ease, box-shadow 300ms ease;
+}
+.cine-flow__node.is-source { color: var(--stage-text); border-color: rgba(255, 255, 255, 0.28); }
+.cine-flow__node.is-sink {
+  color: var(--stage-energy);
+  border-color: rgba(63, 203, 154, 0.5);
+  background: rgba(63, 203, 154, 0.12);
+  box-shadow: 0 0 0 1px rgba(63, 203, 154, 0.18), 0 12px 30px -22px rgba(63, 203, 154, 0.9);
+}
+.cine-flow.is-stopped .cine-flow__node.is-sink {
+  color: var(--stage-stop);
+  border-color: rgba(239, 107, 90, 0.55);
+  background: rgba(239, 107, 90, 0.12);
+  box-shadow: 0 0 0 1px rgba(239, 107, 90, 0.2);
+}
+.cine-flow__stop {
+  font-style: normal;
+  margin-left: 6px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--stage-stop);
+  border: 1px solid rgba(239, 107, 90, 0.5);
+  border-radius: 999px;
+  padding: 1px 5px;
+  background: rgba(239, 107, 90, 0.12);
+}
+.cine-flow__edge { position: relative; flex: 1 1 14px; min-width: 10px; height: 14px; margin: 0 5px; }
+.cine-flow__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 5px, transparent 5px 10px);
+}
+.cine-flow__edge.is-active .cine-flow__track {
+  background: repeating-linear-gradient(90deg, rgba(63, 203, 154, 0.55) 0 5px, transparent 5px 10px);
+}
+.cine-flow.is-stopped .cine-flow__edge.is-active .cine-flow__track {
+  background: repeating-linear-gradient(90deg, rgba(239, 107, 90, 0.55) 0 5px, transparent 5px 10px);
+}
+.cine-flow__packet {
+  position: absolute;
+  top: 50%;
+  margin-top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--stage-energy);
+  box-shadow: 0 0 12px 2px rgba(63, 203, 154, 0.6);
+}
+.cine-flow__packet.is-in { background: var(--stage-solar); box-shadow: 0 0 12px 2px rgba(239, 180, 76, 0.6); }
+
+/* ── the big accelerated-time beat ───────────────────────────────────────── */
+.cine-time {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 6px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(239, 180, 76, 0.45);
+  background: rgba(239, 180, 76, 0.1);
+  box-shadow: 0 22px 60px -50px rgba(239, 180, 76, 0.9);
+}
+.cine-time__k {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--stage-solar);
+  opacity: 0.85;
+}
+.cine-time__v {
+  font-size: clamp(20px, 2.8vw, 32px);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--stage-solar);
+  font-variant-numeric: tabular-nums;
+}
+.cine-time__line { display: none; }
+
+/* ── the reveal's value line ─────────────────────────────────────────────── */
+.cine-reveal__value {
+  margin: 10px 0 0;
+  font-size: clamp(14px, 1.5vw, 17px);
+  font-weight: 600;
+  color: #fff;
+  max-width: 68ch;
+}
+
+/* ── the pending follow-ups, struck out one by one ───────────────────────── */
+.cine-fu.is-cancelling { animation: cine-cancel 520ms ease forwards; animation-delay: calc(var(--i, 0) * 240ms); }
+.cine-fu.is-cancelling .cine-fu__strike { animation: cine-strike 320ms ease forwards; animation-delay: calc(var(--i, 0) * 240ms + 200ms); }
+@keyframes cine-cancel {
+  from { opacity: 0.2; transform: translateX(8px); }
+  to { opacity: 0.7; transform: none; }
+}
+@keyframes cine-strike {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (max-width: 900px) {
+  .cine-flow { padding: 8px; }
+  .cine-flow__node { font-size: 9px; letter-spacing: 0.03em; padding: 3px 6px; }
+  .cine-flow__edge { min-width: 8px; margin: 0 3px; }
+  .cine-flow__stop { display: none; }
+  .cine-time { gap: 8px; padding: 5px 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cine-flow__packet { display: none; }
+  .cine-fu.is-cancelling { animation: none; opacity: 0.7; }
+  .cine-fu.is-cancelling .cine-fu__strike { animation: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   V4 additions — the landing-page framing of the same stage. Still additive:
+   nothing above changes, so SYSTEM VIEW stays exactly as validated.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── the section's own call to action ─────────────────────────────────────── */
+.cine-start { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 20px; }
+.cine-start__hint { font-size: 13px; }
+.cine-below { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
+.cine-below .cine-note { margin-top: 0; }
+.cine-below__cta { padding: 9px 18px; font-size: 13.5px; }
+
+/* ── what actually left the system, and on what ───────────────────────────── */
+.cine-travel__sent {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  color: var(--stage-energy);
+  border: 1px solid rgba(63, 203, 154, 0.45);
+  border-radius: 999px;
+  padding: 2px 7px;
+}
+
+/* ── the fields leaving the conversation and landing on the lead ──────────── */
+.cine-board { position: relative; }
+.cine-fly { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: 16px; z-index: 4; }
+.cine-fly__chip {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--stage-text);
+  background: rgba(63, 203, 154, 0.14);
+  border: 1px solid rgba(63, 203, 154, 0.45);
+  border-radius: 999px;
+  padding: 3px 10px;
+  box-shadow: 0 12px 26px -20px rgba(63, 203, 154, 0.9);
+}
+
+/* ── the booking, as an object on the lead card ───────────────────────────── */
+.cine-cal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(63, 203, 154, 0.45);
+  background: rgba(63, 203, 154, 0.1);
+  color: var(--stage-text);
+}
+.cine-cal__v { font-weight: 800; font-size: 15px; letter-spacing: 0.01em; color: #fff; }
+.cine-cal__b {
+  margin-left: auto;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--stage-energy);
+  border: 1px solid rgba(63, 203, 154, 0.5);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+/* ── the reply + the automatic stop, in that order ────────────────────────── */
+.cine-reply {
+  justify-self: start;
+  font-size: clamp(13px, 1.45vw, 16px);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--stage-solar);
+}
+.cine-stopbig {
+  margin: 0;
+  font-size: clamp(22px, 3.4vw, 40px);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--stage-stop);
+  text-shadow: 0 0 44px rgba(239, 107, 90, 0.35);
+}
+.stopbanner__collapsed { margin: 10px 0 0; font-size: 12.5px; color: var(--stage-dim); }
+
+/* the internal reminder reads differently from a message that leaves */
+.cine-fu.is-reminder { border-style: dashed; }
+.cine-fu.is-reminder .cine-fu__n { background: rgba(239, 180, 76, 0.16); color: var(--stage-solar); }
+
+/* ── the silence beat: the rest of the interface is pushed back hard ──────── */
+.cine[data-gone="true"] .cine-surface[data-cine-cam="record"],
+.cine[data-gone="true"] .cine-outbox { opacity: 0.16; filter: saturate(0.3) brightness(0.62); }
+.cine[data-gone="true"] .cine-surface[data-cine-cam="conversation"] { opacity: 1; filter: none; }
+.cine[data-gone="true"] .cine-flow { opacity: 0.45; }
+
+@media (max-width: 900px) {
+  .cine-board { position: relative; }
+  .cine-fly__chip { font-size: 10px; padding: 3px 8px; }
+  .cine-stopbig { letter-spacing: 0.02em; }
+  .cine-below { gap: 12px; }
+  .cine-below__cta { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cine-fly { display: none; }
+  .sys__entry { display: none; }
+}

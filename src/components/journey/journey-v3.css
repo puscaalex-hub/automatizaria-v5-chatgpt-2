@@ -1,0 +1,194 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   MASTER SOLAR V3 — cinematic layer.
+   Additive on top of journey.css: nothing here replaces a V2 rule, it only
+   adds (1) the travelling lead rail, (2) the outbox bus, (3) the elapsed-time
+   moment, (4) the visible cancellation, and (5) the focus hierarchy that dims
+   whatever is not the current event.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── legibility on the dark stage (V3 pass 2) ─────────────────────────────── *
+   Micro-labels on a dark surface were reading at the muted tone (≈#9c9184) and at
+   9.5–10.5px. V3 raises the tone to --stage-dim and lifts anything below 12px to
+   at least 11px, without changing the V2 layout grid. */
+.pipe__hint, .eng__kind, .profile__k, .rail__title, .fu__when { color: var(--stage-dim); }
+.pipe__label { font-size: 11px; }
+.eng__kind { font-size: 10.5px; }
+.pipe__hint { font-size: 10.5px; }
+.profile__k { font-size: 10.5px; }
+
+/* Focus hierarchy: the lead card is the protagonist, so the CRM panel is never
+   blurred out of legibility — it is de-emphasised gently, while the two machine
+   surfaces take the full dim. */
+[data-testid="surface-crm"].is-dim {
+  opacity: 0.74;
+  filter: blur(0.5px) saturate(0.8) brightness(0.86);
+  transform: none;
+}
+
+/* After the STOP moment the cancelled list stays on screen but steps back, so the
+   next beats (recalificare, programare) are not read through a red wall. */
+.stopbanner.is-settled .stopbanner__kills { opacity: 0.62; }
+.stopbanner.is-settled .stopbanner__text { color: var(--stage-dim); }
+.stopbanner.is-settled { border-color: rgba(239, 107, 90, 0.28); }
+
+/* ── camera zones ─────────────────────────────────────────────────────────── */
+.zone { position: relative; }
+
+/* V3 journey header + closing note: fewer words, larger type, one idea. */
+.journey-head { max-width: 860px; margin-bottom: 26px; }
+.journey-head h2 { margin-top: 14px; max-width: 22ch; }
+.journey-head .lede { margin-top: 14px; max-width: 74ch; }
+.journey-note { font-size: 12px; margin-top: 16px; max-width: 92ch; }
+.journey-note__link {
+  border: 0; background: none; padding: 0; color: var(--energy); font-weight: 600;
+  cursor: pointer; font-size: 12px; text-decoration: underline;
+}
+.zone--crm { position: relative; margin-top: 2px; }
+
+/* ── focus hierarchy: spotlight the event, dim the rest ───────────────────── */
+.panel.is-dim,
+.panel.is-focused.is-dim {
+  opacity: 0.52;
+  filter: blur(1.4px) saturate(0.6) brightness(0.72);
+  transform: scale(0.992);
+}
+.panel {
+  transition: opacity 420ms ease, filter 420ms ease, transform 460ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 300ms ease, box-shadow 420ms ease;
+}
+.panel.is-focused:not(.is-dim) {
+  box-shadow: 0 0 0 1px rgba(63, 203, 154, 0.28), 0 26px 60px -44px rgba(63, 203, 154, 0.55);
+  transform: scale(1.008);
+}
+.panel.is-focused:not(.is-dim) .panel__title { color: #fff; }
+
+/* ── the rail: the lead travelling through the pipeline ───────────────────── */
+.rail {
+  margin-top: 12px; border: 1px solid var(--stage-border-soft); border-radius: 14px;
+  background: rgba(255, 255, 255, 0.022); padding: 12px 16px 16px;
+  transition: border-color 400ms ease, background 400ms ease;
+}
+.rail.is-live { border-color: rgba(63, 203, 154, 0.28); }
+.rail.is-stopped { border-color: rgba(239, 107, 90, 0.42); background: rgba(239, 107, 90, 0.045); }
+.rail__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.rail__title { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--stage-dim); font-weight: 700; }
+.rail__now { font-size: 12.5px; color: var(--stage-text); font-weight: 600; }
+.rail.is-stopped .rail__now { color: var(--stage-stop); }
+
+.rail__track { position: relative; height: 34px; margin: 16px 6px 6px; }
+.rail__line { position: absolute; left: 0; right: 0; top: 50%; height: 3px; transform: translateY(-50%); border-radius: 99px; background: rgba(255, 255, 255, 0.08); }
+.rail__fill { position: absolute; left: 0; top: 50%; height: 3px; transform: translateY(-50%); border-radius: 99px; background: linear-gradient(90deg, var(--stage-energy), var(--stage-solar)); box-shadow: 0 0 14px 1px rgba(63, 203, 154, 0.35); }
+.rail.is-stopped .rail__fill { background: linear-gradient(90deg, var(--stage-stop), var(--stage-alert)); box-shadow: none; }
+.rail__token {
+  position: absolute; right: -13px; top: 50%; transform: translateY(-50%);
+  width: 26px; height: 26px; border-radius: 9px; display: grid; place-items: center;
+  background: linear-gradient(140deg, #fdfbf7, #f2e9da); color: #12100c;
+  border: 2px solid var(--stage-energy); font-size: 12px; font-weight: 800;
+  box-shadow: 0 10px 24px -12px rgba(63, 203, 154, 0.9), 0 0 0 6px rgba(63, 203, 154, 0.10);
+}
+.rail.is-stopped .rail__token { border-color: var(--stage-stop); box-shadow: 0 10px 24px -12px rgba(239, 107, 90, 0.9), 0 0 0 6px rgba(239, 107, 90, 0.10); }
+.rail__node { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; }
+.rail__dot { width: 9px; height: 9px; border-radius: 50%; background: var(--stage-border); border: 2px solid var(--stage-bg); }
+.rail__node.is-done .rail__dot { background: var(--stage-solar); }
+.rail__node.is-current .rail__dot { background: var(--stage-energy); box-shadow: 0 0 0 5px rgba(63, 203, 154, 0.18); }
+.rail__label { position: absolute; top: 22px; font-size: 11px; color: var(--stage-dim); white-space: nowrap; }
+.rail__node.is-current .rail__label { color: var(--stage-text); font-weight: 700; }
+.rail__node.is-done .rail__label { color: var(--stage-dim); }
+
+.rail__flash { display: flex; align-items: baseline; gap: 11px; flex-wrap: wrap; margin-top: 4px; }
+.rail__flash-label { font-family: var(--font-display); font-size: clamp(17px, 2vw, 22px); font-weight: 700; letter-spacing: -0.02em; color: var(--stage-text); }
+.rail.is-stopped .rail__flash-label { color: var(--stage-stop); }
+.rail__flash-sub { font-size: 11.5px; color: var(--stage-muted); }
+
+/* ── the outbox bus ───────────────────────────────────────────────────────── */
+.bus {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 16px;
+  border: 1px solid var(--stage-border-soft); border-radius: 14px; padding: 11px 14px;
+  background: rgba(255, 255, 255, 0.02); margin: 0 0 10px;
+  transition: border-color 400ms ease, background 400ms ease;
+}
+.bus.is-live { border-color: rgba(63, 203, 154, 0.3); }
+.bus.is-cut { border-color: rgba(239, 107, 90, 0.45); background: rgba(239, 107, 90, 0.05); }
+.bus__hub { display: flex; flex-direction: column; justify-content: center; padding-right: 14px; border-right: 1px solid var(--stage-border-soft); }
+.bus__hub-k { font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--stage-muted); }
+.bus__hub-v { font-size: 13px; font-weight: 700; color: var(--stage-energy); }
+.bus.is-cut .bus__hub-v { color: var(--stage-stop); }
+.bus__lanes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.bus__lane { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.bus__wire { position: relative; flex: 1 1 auto; height: 3px; border-radius: 99px; overflow: hidden; background-image: linear-gradient(to right, var(--stage-border) 0 6px, transparent 6px 13px); background-size: 13px 3px; background-repeat: repeat-x; }
+.bus__lane.is-on .bus__wire { background-image: linear-gradient(to right, rgba(63, 203, 154, 0.55) 0 6px, transparent 6px 13px); }
+.bus__lane.is-calmed .bus__wire { background-image: linear-gradient(to right, rgba(239, 107, 90, 0.5) 0 6px, transparent 6px 13px); }
+.bus__packet { position: absolute; top: 50%; left: 0; width: 22px; height: 3px; transform: translateY(-50%); border-radius: 99px; background: linear-gradient(90deg, transparent, var(--stage-energy), transparent); }
+.bus__node { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--stage-dim); white-space: nowrap; }
+.bus__lane.is-on .bus__node { color: var(--stage-text); font-weight: 700; }
+.bus__lane.is-calmed .bus__node { color: var(--stage-stop); }
+.bus__status { font-style: normal; font-size: 10px; padding: 1px 7px; border-radius: 999px; border: 1px solid rgba(63, 203, 154, 0.4); color: var(--stage-energy); }
+.bus__foot { grid-column: 1 / -1; border-top: 1px solid var(--stage-border-soft); padding-top: 8px; }
+.bus__note { font-size: 12px; color: var(--stage-dim); }
+.bus__note strong { color: var(--stage-text); }
+.bus__note--stop { color: var(--stage-stop); }
+
+/* ── the elapsed-time moment ──────────────────────────────────────────────── */
+.timejump {
+  position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px; pointer-events: none;
+  border-radius: 16px; overflow: hidden;
+  background: radial-gradient(70% 90% at 50% 50%, rgba(21, 18, 14, 0.88), rgba(21, 18, 14, 0.62));
+  backdrop-filter: blur(2px);
+}
+.timejump__glow { position: absolute; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(239, 180, 76, 0.22), transparent 68%); animation: tj-pulse 2.4s ease-in-out infinite; }
+.timejump__k { position: relative; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--stage-solar); }
+.timejump__at { position: relative; font-family: var(--font-display); font-size: clamp(44px, 7vw, 78px); font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: #fff; text-shadow: 0 12px 40px rgba(239, 180, 76, 0.35); font-variant-numeric: tabular-nums; }
+.timejump__sub { position: relative; font-size: 12px; color: var(--stage-dim); }
+@keyframes tj-pulse { 0%, 100% { transform: scale(0.92); opacity: 0.75; } 50% { transform: scale(1.08); opacity: 1; } }
+
+/* ── visible cancellation ─────────────────────────────────────────────────── */
+.stopbanner { align-items: flex-start; }
+.stopbanner__body { min-width: 0; flex: 1 1 auto; }
+.stopbanner__kills { list-style: none; margin: 11px 0 0; padding: 9px 0 0; border-top: 1px solid rgba(239, 107, 90, 0.25); display: flex; flex-direction: column; gap: 6px; }
+.stopkill { position: relative; display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 5px 9px; border-radius: 9px; background: rgba(239, 107, 90, 0.07); border: 1px solid rgba(239, 107, 90, 0.28); }
+.stopkill__n { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.05); font-size: 10.5px; font-weight: 700; color: var(--stage-stop); }
+.stopkill__label { font-size: 12.5px; color: var(--stage-dim); min-width: 0; }
+.stopkill__label em { font-style: normal; font-size: 10.5px; color: var(--stage-muted); display: block; }
+.stopkill__strike { position: absolute; left: 38px; right: 92px; top: 50%; height: 2px; transform-origin: left center; background: var(--stage-stop); border-radius: 99px; }
+.stopkill__tag { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(239, 107, 90, 0.5); color: var(--stage-stop); white-space: nowrap; }
+
+/* ── pacing: the STOP moment and the cancelled list get the screen longer ──── */
+.replyhero { display: flex; align-items: center; gap: 10px; margin-bottom: 2px; }
+
+@media (max-width: 900px) {
+  .bus { grid-template-columns: minmax(0, 1fr); }
+  .bus__hub { flex-direction: row; gap: 8px; align-items: baseline; padding: 0 0 8px; border-right: 0; border-bottom: 1px solid var(--stage-border-soft); }
+  .bus__lanes { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .bus__lane { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .bus__wire { width: 100%; flex: 0 0 3px; }
+  .rail__track { margin: 14px 4px 4px; }
+  .rail__label { font-size: 9.5px; }
+  .rail__flash-label { font-size: 17px; }
+  .timejump__at { font-size: clamp(38px, 12vw, 58px); }
+  .stopkill__strike { left: 36px; right: 84px; }
+}
+
+@media (max-width: 560px) {
+  .bus__lanes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bus__lane[data-lane="calendar"] { grid-column: 1 / -1; }
+  .rail__label { display: none; }
+  .rail__node.is-current .rail__label { display: block; }
+  .rail__token { width: 22px; height: 22px; font-size: 11px; right: -11px; }
+  /* tap targets: at 390px the speed segment was 31-45 x 34 px, below the ~36px
+     comfortable target — give it height and let the row wrap instead of shrink */
+  .ctl__seg-btn { padding: 10px 13px; font-size: 12px; min-height: 40px; }
+  .ctl__scene, .ctl__btn { min-height: 40px; }
+  .stopkill { grid-template-columns: 20px minmax(0, 1fr); }
+  .stopkill__tag { grid-column: 2; justify-self: start; }
+  .stopkill__strike { left: 32px; right: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel { transition: none; }
+  .panel.is-dim { filter: none; opacity: 0.68; transform: none; }
+  .panel.is-focused:not(.is-dim) { transform: none; }
+  .timejump__glow { animation: none; }
+  .bus__packet { display: none; }
+  .rail__fill { transition: none; }
+}

@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+
+# build output is committed on purpose (handoff preview), but keep caches out
+.vite/
+*.tsbuildinfo
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# logs
+*.log
+npm-debug.log*
+dist/
